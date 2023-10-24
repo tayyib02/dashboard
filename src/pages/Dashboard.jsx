@@ -122,10 +122,7 @@ function Dashboard() {
           <Card className="p-3 shadow-sm rounded  d-flex flex-column  gap-3  h-100">
             <h6 className="m-0">Services bought this year</h6>
             <div className="d-flex justify-content-center">
-              <div
-                className="bg-primary"
-                style={{ maxWidth: "550px", width: "100%" }}
-              >
+              <div className="" style={{ maxWidth: "550px", width: "100%" }}>
                 <PieCharts
                   series={[15, 20]}
                   labels={["Electrician", "Plumber"]}

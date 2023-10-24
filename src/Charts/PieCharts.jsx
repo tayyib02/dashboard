@@ -22,7 +22,7 @@ function PieCharts({ series, labels }) {
   };
 
   return (
-    <div className="bg-secondary">
+    <div className="">
       <ReactApexChart
         options={options}
         series={series}
