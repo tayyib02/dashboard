@@ -17,7 +17,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 import AppIcon from "../assets/icon.svg";
 
@@ -34,7 +34,6 @@ import {
 } from "@mui/icons-material";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { theme } from "../styles/MUITheme";
 
 const DrawerContent = () => {
   const history = useNavigate();
@@ -194,7 +193,11 @@ const DrawerContent = () => {
 
 function Main() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const history = useNavigate();
 
+  useEffect(() => {
+    history("/user");
+  }, []);
   return (
     // <ThemeProvider theme={theme}>
     <div>

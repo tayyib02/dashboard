@@ -27,6 +27,16 @@ const routes = createBrowserRouter([
           {
             path: "chats",
             element: <Chats />,
+            children: [
+              {
+                path: "",
+                element: <NoMessage />,
+              },
+              {
+                path: ":id",
+                element: <ChatMessages />,
+              },
+            ],
           },
           {
             path: "invoices",
