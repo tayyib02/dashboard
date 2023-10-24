@@ -1,0 +1,4 @@
+[[redirects]]
+  from = "/*"                # Capture all paths
+  to = "/index.html"    # Redirect all paths to this page
+  status = 200   
