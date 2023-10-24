@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 import Main from "../template/Main";
 import Dashboard from "../pages/Dashboard";
 import Chats from "../pages/Chats";

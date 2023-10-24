@@ -15,6 +15,11 @@ import {
   MenuItem,
   Toolbar,
   ThemeProvider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
 } from "@mui/material";
 
 import React, { useEffect } from "react";
@@ -23,6 +28,7 @@ import AppIcon from "../assets/icon.svg";
 
 import {
   ChatOutlined,
+  Close,
   GridView,
   HandymanOutlined,
   LogoutOutlined,
@@ -106,11 +112,20 @@ const DrawerContent = () => {
     history(route);
   };
 
+  const [improveDailogOpen, setImproveDailogOpen] = useState(false);
+  const improveDailogClose = () => {
+    setImproveDailogOpen(false);
+  };
+
   return (
     <Box
       sx={{ minHeight: "100vh" }}
       className="shadow-sm d-flex flex-column justify-content-between "
     >
+      <ImproveDailog
+        open={improveDailogOpen}
+        handleClose={improveDailogClose}
+      />
       <Box>
         <Box className="d-flex justify-content-center">
           <img src={AppIcon} alt="app icon" width={"50%"} />
@@ -171,6 +186,7 @@ const DrawerContent = () => {
             textTransform: "none",
             py: 1.4,
           }}
+          onClick={() => setImproveDailogOpen(true)}
         >
           How to improve?
         </Button>
@@ -191,13 +207,55 @@ const DrawerContent = () => {
   );
 };
 
+const ImproveDailog = ({ open, handleClose }) => {
+  return (
+    <Dialog
+      open={open}
+      handleClose={() => handleClose()}
+      maxWidth={"sm"}
+      fullWidth
+    >
+      <DialogTitle>
+        <Box className="d-flex align-items-center justify-content-between mb-3">
+          <h6 className="m-0 fw-bold">How we can improve</h6>
+          <IconButton onClick={() => handleClose()}>
+            <Close />
+          </IconButton>
+        </Box>
+      </DialogTitle>
+      <DialogContent className="d-flex flex-column gap-3">
+        <TextField
+          multiline
+          rows={6}
+          label="Description"
+          InputLabelProps={{ shrink: true }}
+          InputProps={{ disableUnderline: true }}
+          size="small"
+          variant="filled"
+          fullWidth
+        />
+      </DialogContent>
+      <DialogActions>
+        <Box className="d-flex align-items-center justify-content-center gap-3 w-100 mb-2">
+          <Button disableElevation onClick={() => handleClose()}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            disableElevation
+            onClick={() => handleClose()}
+          >
+            Send feedback
+          </Button>
+        </Box>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 function Main() {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const history = useNavigate();
 
-  useEffect(() => {
-    history("/user");
-  }, []);
   return (
     // <ThemeProvider theme={theme}>
     <div>
