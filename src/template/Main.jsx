@@ -144,10 +144,7 @@ const DrawerContent = () => {
                 py: 1.4,
                 borderTopRightRadius: 10,
                 borderBottomRightRadius: 10,
-                "&.Mui-selected": {
-                  backgroundColor: "primary.main",
-                  color: "#fff",
-                },
+
                 "&.Mui-selected": {
                   backgroundColor: "primary.main",
                   color: "#fff",

@@ -13,9 +13,6 @@ function PieCharts({ series, labels }) {
       {
         breakpoint: 480,
         options: {
-          chart: {
-            width: 200,
-          },
           legend: {
             position: "bottom",
           },
@@ -25,7 +22,7 @@ function PieCharts({ series, labels }) {
   };
 
   return (
-    <div>
+    <div className="bg-secondary">
       <ReactApexChart
         options={options}
         series={series}
