@@ -93,11 +93,11 @@ function RecentReviews() {
             ))}
           </TextField>
         </Stack> */}
-      <Grid container spacing={2}>
+      <Grid container spacing={2} className="mt-4">
         {new Array(9).fill(null).map((_, i) => {
           return (
             <Grid item xs={12} md={6} xl={4}>
-              <Card className="p-3 shadow-sm-sm rounded d-flex flex-column gap-3 mt-4">
+              <Card className="p-3 shadow-sm-sm rounded d-flex flex-column gap-3">
                 <Review key={i} className="border" />
               </Card>
             </Grid>
