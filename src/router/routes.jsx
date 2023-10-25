@@ -12,6 +12,7 @@ import Services from "../pages/Services";
 import ChatMessages from "../pages/ChatMessages";
 import NoMessage from "../pages/NoMessage";
 import RecentOrders from "../pages/RecentOrders";
+import RecentReviews from "../pages/RecentReviews";
 
 const routes = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const routes = createBrowserRouter([
           {
             path: "recent-purchases",
             element: <RecentOrders />,
+          },
+          {
+            path: "recent-reviews",
+            element: <RecentReviews />,
           },
           {
             path: "chats/open/:id",
