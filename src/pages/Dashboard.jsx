@@ -29,35 +29,55 @@ const recentPurchasesColumns = [
   {
     field: "id",
     headerName: "ID",
-    minWidth: 210,
+    minWidth: 50,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
+    valueFormatter: (params) => console.log(params),
   },
   {
-    field: "businessName",
-    headerName: "Business Name",
-    minWidth: 250,
+    field: "name",
+    headerName:
+      location.pathname.split("/")[1] === "business"
+        ? "Client Name"
+        : "Business Name",
+    minWidth: location.pathname.split("/")[1] === "business" ? 150 : 200,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
+  },
+  {
+    field: "service",
+    headerName: "Serivce",
+    minWidth: 100,
+    flex: 1,
+    cellClassName: "text-muted",
+    headerClassName: "fw-bold bg-light",
+  },
+  {
+    field: "city",
+    headerName: "City",
+    minWidth: 150,
+    flex: 1,
+    cellClassName: "text-muted",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "price",
     headerName: "Price",
-    minWidth: 130,
+    minWidth: 80,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
     valueFormatter: (params) => "$" + params.value,
   },
   {
     field: "invoiceNumber",
-    headerName: "Invoice Number",
-    minWidth: 230,
+    headerName: "Invoice",
+    minWidth: 130,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "orderDate",
@@ -65,7 +85,7 @@ const recentPurchasesColumns = [
     minWidth: 100,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "status",
@@ -73,15 +93,29 @@ const recentPurchasesColumns = [
     minWidth: 100,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
+    renderCell: (params) => (
+      <p
+        className={`${
+          params.value === "Paid" ? "text-success m-0" : "text-danger m-0"
+        }`}
+      >
+        {params.value}
+      </p>
+    ),
   },
 ];
 
-const recentPurchasesRows = new Array(5).fill(null).map(() => ({
-  id: faker.database.mongodbObjectId(),
-  businessName: faker.company.name(),
+const recentPurchasesRows = new Array(5).fill(null).map((_, i) => ({
+  id: i + 1,
+  name:
+    location.pathname.split("/")[1] === "user"
+      ? faker.company.name()
+      : faker.person.fullName(),
   price: faker.commerce.price(),
-  invoiceNumber: "#" + faker.database.mongodbObjectId(),
+  service: "Plumbing",
+  city: faker.location.city(),
+  invoiceNumber: ("#" + faker.database.mongodbObjectId()).slice(0, 7),
   orderDate: moment().format("DD MMM YYYY"),
   status: faker.helpers.arrayElement(["Pending", "Paid"]),
 }));
@@ -94,7 +128,7 @@ function Dashboard() {
         container
         justifyContent="space-between"
         alignItems="stretch"
-        spacing={4}
+        spacing={2}
         className="mt-2"
       >
         <Grid item xs={12} className="d-flex flex-column gap-3">
@@ -121,7 +155,7 @@ function Dashboard() {
         <Grid item xs={12} lg={6}>
           <Card className="p-3 shadow-sm rounded  d-flex flex-column  gap-3  h-100">
             <h6 className="m-0">Services bought this year</h6>
-            <div className="d-flex justify-content-center">
+            <div className="d-flex justify-content-center align-items-center h-100">
               <div className="" style={{ maxWidth: "550px", width: "100%" }}>
                 <PieCharts
                   series={[15, 20]}

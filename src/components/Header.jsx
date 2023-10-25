@@ -21,9 +21,9 @@ const DashboardHeadElement = () => (
       variant="filled"
       InputProps={{ disableUnderline: true }}
       label="Search"
-      fullWidth
       sx={{
         maxWidth: "800px",
+        flex: 1,
       }}
     />
   </Box>

@@ -32,7 +32,7 @@ const invoiceColumns = [
     minWidth: 130,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "description",
@@ -40,7 +40,7 @@ const invoiceColumns = [
     minWidth: 250,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
 
   {
@@ -49,7 +49,7 @@ const invoiceColumns = [
     minWidth: 50,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "orderDate",
@@ -57,7 +57,7 @@ const invoiceColumns = [
     minWidth: 100,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "price",
@@ -65,7 +65,7 @@ const invoiceColumns = [
     minWidth: 100,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
     valueFormatter: (params) => "$" + params.value,
   },
   {
@@ -74,7 +74,7 @@ const invoiceColumns = [
     minWidth: 110,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
     valueFormatter: (params) => params.value + "% VAT",
   },
   {
@@ -83,13 +83,13 @@ const invoiceColumns = [
     minWidth: 100,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
     valueFormatter: (params) => "$" + params.value,
   },
 ];
 
-const invoiceRows = new Array(5).fill(null).map(() => ({
-  id: faker.database.mongodbObjectId(),
+const invoiceRows = new Array(5).fill(null).map((_, i) => ({
+  id: i + 1,
   service: "Plumbing",
   description: faker.lorem.sentences(2),
   qty: 1,
@@ -107,7 +107,7 @@ function InvoiceDetail() {
         <Box className="d-flex flex-column flex-md-row align-items-center justify-content-between  gap-2">
           <img src={AppIcon} alt="" style={{ width: "150px" }} />
           <Box className="p-2 px-4 bg-secondary rounded text-white">
-            Invoice Number: <span className="fw-bold">#1236547</span>{" "}
+            Invoice: <span className="fw-bold">#1236547</span>{" "}
           </Box>
         </Box>
         <Stack direction={"column"} spacing={2}>

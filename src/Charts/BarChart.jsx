@@ -39,7 +39,7 @@ function BarChart({ series }) {
       enabled: false,
     },
     xaxis: {
-      categories: ["Jan", "Feb", "Mar", "Apr", "May"],
+      categories: ["Birmingham", "Islamabad", "Toronto", "London", "Delhi"],
       position: "bottom",
       axisTicks: {
         show: false,

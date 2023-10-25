@@ -6,7 +6,7 @@ import { theme } from "./styles/MUITheme";
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <RouterProvider router={routes}></RouterProvider>;
+      <RouterProvider router={routes}></RouterProvider>
     </ThemeProvider>
   );
 }

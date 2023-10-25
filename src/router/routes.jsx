@@ -11,6 +11,7 @@ import HistoryBussiness from "../pages/HistoryBusiness";
 import Services from "../pages/Services";
 import ChatMessages from "../pages/ChatMessages";
 import NoMessage from "../pages/NoMessage";
+import RecentOrders from "../pages/RecentOrders";
 
 const routes = createBrowserRouter([
   {
@@ -23,6 +24,14 @@ const routes = createBrowserRouter([
           {
             path: "",
             element: <Dashboard />,
+          },
+          {
+            path: "recent-purchases",
+            element: <RecentOrders />,
+          },
+          {
+            path: "chats/open/:id",
+            element: <ChatMessages />,
           },
           {
             path: "chats",
@@ -68,6 +77,14 @@ const routes = createBrowserRouter([
           {
             path: "",
             element: <DashboardBusiness />,
+          },
+          {
+            path: "recent-orders",
+            element: <RecentOrders />,
+          },
+          {
+            path: "chats/open/:id",
+            element: <ChatMessages />,
           },
           {
             path: "chats",

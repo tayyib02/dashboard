@@ -27,18 +27,38 @@ const recentPurchasesColumns = [
   {
     field: "id",
     headerName: "ID",
-    minWidth: 180,
+    minWidth: 50,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
+    valueFormatter: (params) => console.log(params),
   },
   {
-    field: "businessName",
-    headerName: "Business Name",
-    minWidth: 200,
+    field: "name",
+    headerName:
+      location.pathname.split("/")[1] === "business"
+        ? "Client Name"
+        : "Business Name",
+    minWidth: location.pathname.split("/")[1] === "business" ? 150 : 200,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
+  },
+  {
+    field: "service",
+    headerName: "Serivce",
+    minWidth: 100,
+    flex: 1,
+    cellClassName: "text-muted",
+    headerClassName: "fw-bold bg-light",
+  },
+  {
+    field: "city",
+    headerName: "City",
+    minWidth: 150,
+    flex: 1,
+    cellClassName: "text-muted",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "price",
@@ -46,16 +66,16 @@ const recentPurchasesColumns = [
     minWidth: 80,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
     valueFormatter: (params) => "$" + params.value,
   },
   {
     field: "invoiceNumber",
-    headerName: "Invoice Number",
-    minWidth: 150,
+    headerName: "Invoice",
+    minWidth: 130,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "orderDate",
@@ -63,7 +83,7 @@ const recentPurchasesColumns = [
     minWidth: 100,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "status",
@@ -71,15 +91,30 @@ const recentPurchasesColumns = [
     minWidth: 100,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
+    renderCell: (params) => (
+      <p
+        className={`${
+          params.value === "Paid" ? "text-success m-0" : "text-danger m-0"
+        }`}
+      >
+        {params.value}
+      </p>
+    ),
   },
 ];
 
-const recentPurchasesRows = new Array(5).fill(null).map(() => ({
-  id: faker.database.mongodbObjectId(),
-  businessName: faker.company.name(),
+const recentPurchasesRows = new Array(5).fill(null).map((_, i) => ({
+  id: i + 1,
+  name:
+    location.pathname.split("/")[1] === "user"
+      ? faker.company.name()
+      : faker.person.fullName(),
+
   price: faker.commerce.price(),
-  invoiceNumber: "#" + faker.database.mongodbObjectId(),
+  service: "Plumbing",
+  city: faker.location.city(),
+  invoiceNumber: ("#" + faker.database.mongodbObjectId()).slice(0, 7),
   orderDate: moment().format("DD MMM YYYY"),
   status: faker.helpers.arrayElement(["Pending", "Paid"]),
 }));
@@ -92,7 +127,7 @@ function HistoryBussiness() {
         container
         justifyContent="space-between"
         alignItems="stretch"
-        spacing={4}
+        spacing={2}
         className="mt-2"
       >
         <Grid item xs={12} lg={8}>
@@ -100,6 +135,7 @@ function HistoryBussiness() {
             <h6 className="m-0">
               Monthly Revenue
               <select
+                className="fs-6 ms-2"
                 style={{
                   border: "none",
                   outline: "none",
@@ -134,33 +170,39 @@ function HistoryBussiness() {
               className="p-3 shadow-sm rounded d-flex flex-column justify-content-start gap-3 "
               style={{ flex: 1 }}
             >
-              <Stack direction={"row"} className="h-100">
-                <div className="h-100 d-flex flex-column justify-content-center w-50">
-                  <h4 className="mb-4">
-                    New Visits{" "}
-                    <select
-                      className="fs-6"
-                      style={{
-                        border: "none",
-                        outline: "none",
-                        borderBottom: "1px solid",
-                      }}
-                    >
-                      <option>2023</option>
-                    </select>
-                  </h4>
-                  <div>
-                    <h1 className="m-0">
-                      {faker.helpers.rangeToNumber({ min: 1000, max: 10000 })}
-                    </h1>
-                    <p className="text-success">
-                      +21.01% <TrendingUp />
-                    </p>
+              <Stack
+                direction={"column"}
+                justifyContent={"center"}
+                className="h-100"
+              >
+                <h4 className="mb-4 w-100">
+                  New Visits{" "}
+                  <select
+                    className="fs-6 ms-2"
+                    style={{
+                      border: "none",
+                      outline: "none",
+                      borderBottom: "1px solid",
+                    }}
+                  >
+                    <option>2023</option>
+                  </select>
+                </h4>
+                <Stack direction={"row"}>
+                  <div className="h-100 d-flex flex-column justify-content-center w-50">
+                    <div>
+                      <h1 className="m-0">
+                        {faker.helpers.rangeToNumber({ min: 1000, max: 10000 })}
+                      </h1>
+                      <p className="text-success">
+                        +21.01% <TrendingUp />
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="d-flex justify-content-end w-50">
-                  <img src={LineSuccess} alt="" className="w-75" />
-                </div>
+                  <div className="d-flex justify-content-end w-50">
+                    <img src={LineSuccess} alt="" className="w-75" />
+                  </div>
+                </Stack>
               </Stack>
             </Card>
             <Card
@@ -170,7 +212,7 @@ function HistoryBussiness() {
               <h6 className="m-0">
                 Previous Prices and Services{" "}
                 <select
-                  className="fs-6"
+                  className="fs-6 ms-2"
                   style={{
                     border: "none",
                     outline: "none",
@@ -215,7 +257,7 @@ function HistoryBussiness() {
               <h6 className="m-0">
                 Recent Orders{" "}
                 <select
-                  className="fs-6 me-2"
+                  className="fs-6 mx-2"
                   style={{
                     border: "none",
                     outline: "none",
@@ -240,7 +282,7 @@ function HistoryBussiness() {
                   ))}
                 </select>
                 <select
-                  className="fs-6"
+                  className="fs-6 ms-2"
                   style={{
                     border: "none",
                     outline: "none",
@@ -266,7 +308,7 @@ function HistoryBussiness() {
               <h6 className="m-0">
                 Jobs in Cities{" "}
                 <select
-                  className="fs-6"
+                  className="fs-6 ms-2"
                   style={{
                     border: "none",
                     outline: "none",

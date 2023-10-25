@@ -29,18 +29,21 @@ const recentPurchasesColumns = [
   {
     field: "id",
     headerName: "ID",
-    minWidth: 210,
+    minWidth: 80,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
   {
-    field: "businessName",
-    headerName: "Business Name",
+    field: "name",
+    headerName:
+      location.pathname.split("/")[1] === "business"
+        ? "Client Name"
+        : "Business Name",
     minWidth: 250,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "price",
@@ -48,16 +51,16 @@ const recentPurchasesColumns = [
     minWidth: 130,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
     valueFormatter: (params) => "$" + params.value,
   },
   {
     field: "invoiceNumber",
-    headerName: "Invoice Number",
+    headerName: "Invoice",
     minWidth: 230,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "orderDate",
@@ -65,7 +68,7 @@ const recentPurchasesColumns = [
     minWidth: 100,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "status",
@@ -73,15 +76,27 @@ const recentPurchasesColumns = [
     minWidth: 100,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
+    renderCell: (params) => (
+      <p
+        className={`${
+          params.value === "Paid" ? "text-success m-0" : "text-danger m-0"
+        }`}
+      >
+        {params.value}
+      </p>
+    ),
   },
 ];
 
-const recentPurchasesRows = new Array(5).fill(null).map(() => ({
-  id: faker.database.mongodbObjectId(),
-  businessName: faker.company.name(),
+const recentPurchasesRows = new Array(5).fill(null).map((_, i) => ({
+  id: i + 1,
+  name:
+    location.pathname.split("/")[1] === "user"
+      ? faker.company.name()
+      : faker.person.fullName(),
   price: faker.commerce.price(),
-  invoiceNumber: "#" + faker.database.mongodbObjectId(),
+  invoiceNumber: ("#" + faker.database.mongodbObjectId()).slice(0, 7),
   orderDate: moment().format("DD MMM YYYY"),
   status: faker.helpers.arrayElement(["Pending", "Paid"]),
 }));
@@ -94,7 +109,7 @@ function HistoryUser() {
         container
         justifyContent="space-between"
         alignItems="stretch"
-        spacing={4}
+        spacing={2}
         className="mt-4"
       >
         <Grid item xs={12} className="d-flex flex-column gap-3">
@@ -107,6 +122,7 @@ function HistoryUser() {
               <h6 className="m-0">
                 Recent Purchases in
                 <select
+                  className="fs-6 ms-2"
                   style={{
                     border: "none",
                     outline: "none",
@@ -131,6 +147,7 @@ function HistoryUser() {
             <h6 className="m-0">
               Services bought in{" "}
               <select
+                className="fs-6 ms-2"
                 style={{
                   border: "none",
                   outline: "none",
@@ -160,6 +177,7 @@ function HistoryUser() {
               <h6 className="m-0">
                 Your Reviews since{" "}
                 <select
+                  className="fs-6 ms-2"
                   style={{
                     border: "none",
                     outline: "none",

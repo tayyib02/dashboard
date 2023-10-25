@@ -38,10 +38,10 @@ const recentPurchasesColumns = [
   {
     field: "name",
     headerName: "Name",
-    minWidth: 250,
+    minWidth: 150,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "description",
@@ -49,7 +49,7 @@ const recentPurchasesColumns = [
     minWidth: 350,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
   },
   {
     field: "price",
@@ -57,7 +57,7 @@ const recentPurchasesColumns = [
     minWidth: 130,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
     valueFormatter: (params) => "$" + params.value,
   },
   {
@@ -66,28 +66,31 @@ const recentPurchasesColumns = [
     minWidth: 100,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
     valueFormatter: (params) => params.value + "%",
   },
   {
     field: "image",
     headerName: "Thumbnail",
     minWidth: 100,
+    maxWidth: 100,
     flex: 1,
     cellClassName: "text-muted",
-    headerClassName: "fw-bold",
+    headerClassName: "fw-bold bg-light",
     renderCell: () => (
-      <Avatar
-        src={faker.image.urlLoremFlickr({ category: "job" })}
-        sx={{ overflow: "visible" }}
-      />
+      <div className="bg-primary">
+        <Avatar
+          sx={{ borderRadius: 1, height: 70, width: 70 }}
+          src={faker.image.urlLoremFlickr({ category: "job" })}
+        ></Avatar>
+      </div>
     ),
   },
 ];
 
-const recentPurchasesRows = new Array(5).fill(null).map(() => ({
-  id: faker.database.mongodbObjectId(),
-  name: faker.company.name(),
+const recentPurchasesRows = new Array(5).fill(null).map((_, i) => ({
+  id: i + 1,
+  name: "Plumbing",
   price: faker.commerce.price(),
   description: faker.lorem.sentences(),
   vat: faker.helpers.rangeToNumber({ min: 10, max: 15 }),
@@ -199,10 +202,10 @@ function Services() {
     setServicesDailogOpen(false);
   };
   return (
-    <Container maxWidth="100%">
+    <Container maxWidth="100%" className="min-vh-100">
       <AddService open={servicesDailogOpen} handleClose={servicesDailogClose} />
       <Header />
-      <Grid container spacing={2} className="mt-4">
+      <Grid container spacing={2} sx={{ flex: 1 }} className="mt-4 ">
         <Grid item xs={12}>
           <Button
             variant="contained"
@@ -222,6 +225,7 @@ function Services() {
               columns={recentPurchasesColumns}
               disableColumnMenu
               hideFooter
+              rowHeight={85}
               onRowClick={() => setServicesDailogOpen(true)}
             />
           </Card>

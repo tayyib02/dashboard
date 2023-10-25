@@ -23,12 +23,12 @@ function Chats() {
   const history = useNavigate();
 
   const routeTo = (route) => {
-    history(route);
+    window.innerWidth > 575 ? history(route) : history("open/" + route);
   };
   return (
     <Container maxWidth={"100%"}>
-      <Card className="shadow-sm rounded  d-flex flex-column  gap-3  h-100">
-        <Grid container style={{ height: "90vh" }}>
+      <Card className="shadow-sm rounded  d-flex flex-column    h-100">
+        <Grid container style={{ height: "98vh" }}>
           <Grid
             item
             xs={12}

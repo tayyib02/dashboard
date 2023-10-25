@@ -5,7 +5,7 @@ import {
   PhotoOutlined,
   SendOutlined,
 } from "@mui/icons-material";
-import { Avatar, Box, IconButton, TextField } from "@mui/material";
+import { Avatar, Box, IconButton, InputBase, TextField } from "@mui/material";
 import React from "react";
 
 const VisuallyHiddenInput = styled("input")({
@@ -22,7 +22,7 @@ const VisuallyHiddenInput = styled("input")({
 
 function ChatMessages() {
   return (
-    <Box className="h-100 d-flex flex-column">
+    <Box className="h-100  d-flex flex-column mx-3 shadow">
       <Box
         className=" p-4 d-flex align-items-center gap-2 border-bottom"
         sx={{ height: "80px" }}
@@ -51,7 +51,7 @@ function ChatMessages() {
       </Box>
       <Box
         sx={{ flex: 1 }}
-        className="d-flex flex-column align-items-start p-4"
+        className="d-flex flex-column gap-3 align-items-start p-4 overflowY-auto"
       >
         <Box
           className="bg-primary text-white p-2 rounded align-self-start"
@@ -82,8 +82,13 @@ function ChatMessages() {
           Thanks
         </Box>
       </Box>
-      <Box className="px-4 d-flex gap-2 align-items-center my-4">
-        <TextField fullWidth placeholder="Write your message here"></TextField>
+      <Box className="mx-2 mx-sm-4 d-flex gap-2 align-items-center my-4 border rounded">
+        <InputBase
+          fullWidth
+          sx={{ p: 2 }}
+          placeholder="Message...."
+          variant=""
+        ></InputBase>
         <IconButton>
           <VisuallyHiddenInput type="file" />
           <PhotoOutlined />

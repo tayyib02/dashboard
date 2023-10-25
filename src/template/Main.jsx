@@ -41,7 +41,7 @@ import {
 import { Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-const DrawerContent = () => {
+const DrawerContent = ({ close }) => {
   const history = useNavigate();
 
   const drawerItems =
@@ -154,7 +154,10 @@ const DrawerContent = () => {
                   },
                 },
               }}
-              onClick={() => routeTo(item.route)}
+              onClick={() => {
+                close();
+                routeTo(item.route);
+              }}
             >
               <ListItemIcon
                 sx={{
@@ -258,10 +261,10 @@ function Main() {
     <div>
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
         <Box sx={{ minWidth: "250px" }}>
-          <DrawerContent />
+          <DrawerContent close={() => setDrawerOpen(false)} />
         </Box>
       </Drawer>
-      <Grid container>
+      <Grid container className="min-vh-100">
         <Grid
           xl={2}
           item
@@ -281,10 +284,10 @@ function Main() {
               height: "100vh",
             }}
           >
-            <DrawerContent />
+            <DrawerContent close={() => null} />
           </div>
         </Grid>
-        <Grid item xs xl={10}>
+        <Grid item xs xl={10} className="min-vh-100">
           <AppBar
             className="shadow-none mt-none d-xl-none"
             sx={{
@@ -299,7 +302,7 @@ function Main() {
             </Toolbar>
           </AppBar>
 
-          <Box className="py-3 ">
+          <Box className="  py-3 h-100  ">
             <Outlet />
           </Box>
         </Grid>

@@ -2,6 +2,7 @@ import {
   Box,
   Card,
   Container,
+  IconButton,
   MenuItem,
   Pagination,
   Stack,
@@ -14,8 +15,9 @@ import { DataGrid } from "@mui/x-data-grid";
 import { faker } from "@faker-js/faker";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
 
-const Statuses = ["All", "Paid", "Pending"];
+// const Statuses = ["All", "Paid", "Pending"];
 
 const InvoicesColumns = [
   {
@@ -112,7 +114,27 @@ const inovicesRows = new Array(10).fill(null).map((_, i) => ({
   status: faker.helpers.arrayElement(["Pending", "Paid"]),
 }));
 
-function Invoices() {
+const HeaderContent = () => {
+  const history = useNavigate();
+  const routeTo = (route) => {
+    history(route);
+  };
+
+  return (
+    <div className="d-flex align-items-center gap-2">
+      <IconButton onClick={() => routeTo(-1)}>
+        <ArrowBack />
+      </IconButton>
+      <h4 className="m-0">
+        {location.pathname.split("/")[1] === "user"
+          ? "Recent Purchases"
+          : "Recent Orders"}
+      </h4>
+    </div>
+  );
+};
+
+function RecentOrders() {
   const history = useNavigate();
 
   const routeTo = (route) => {
@@ -120,9 +142,9 @@ function Invoices() {
   };
   return (
     <Container maxWidth="100%">
-      <Header />
+      <Header Data={<HeaderContent />} />
       <Card className="p-3 shadow-sm-sm rounded d-flex flex-column gap-3 mt-4">
-        <Stack
+        {/* <Stack
           direction={"row"}
           justifyContent={"space-between"}
           alignItems={"center"}
@@ -167,7 +189,7 @@ function Invoices() {
               </MenuItem>
             ))}
           </TextField>
-        </Stack>
+        </Stack> */}
         <DataGrid
           rows={inovicesRows}
           columns={InvoicesColumns}
@@ -191,4 +213,4 @@ function Invoices() {
   );
 }
 
-export default Invoices;
+export default RecentOrders;
