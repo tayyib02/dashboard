@@ -15,16 +15,32 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
+import axios from "axios";
 import moment from "moment";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 function Chats() {
   const history = useNavigate();
-
-  const routeTo = (route) => {
-    window.innerWidth > 575 ? history(route) : history("open/" + route);
+const [allChats, setallChats] = useState([])
+  const routeTo = (route ,user_id) => {
+    window.innerWidth > 575 ? history(route,{ state: {
+      userId: user_id
+    }}) : history("open/" + route ,{ state: {
+      userId: user_id
+    }});
   };
+
+  const getAllChats  = async()=>{
+    const response  = await axios.get(`http://localhost:5500/api/v1/chat/getAllConversatioinsById?id=${localStorage.getItem("userid")}&type=${localStorage.getItem("type")}`)
+    console.log(response)
+    setallChats(response?.data?.chats)
+  }
+
+  useEffect(() => {
+    getAllChats()
+  }, [])
+  
   return (
     <Container maxWidth={"100%"}>
       <Card className="shadow-sm rounded  d-flex flex-column    h-100">
@@ -60,12 +76,12 @@ function Chats() {
               />
             </Box>
             <List className=" px-3 d-flex flex-column gap-3">
-              {new Array(5).fill(null).map((_, i) => (
+              {allChats.map((chat, i) => (
                 <ListItemButton
                   key={i}
                   selected={location.pathname.split("/")[3] == i}
                   sx={{ borderRadius: 2 }}
-                  onClick={() => routeTo(i + "")}
+                  onClick={() => routeTo(chat?.channel_id + "" , localStorage.getItem("type") =="User" ?chat?.business_id : chat?.user_id )}
                 >
                   <Box className="d-flex align-items-start justify-content-between w-100">
                     <Box className="d-flex align-items-center gap-2">
@@ -79,7 +95,7 @@ function Chats() {
                       ></Avatar>
                       <div>
                         <p className="fw-bold m-0">
-                          {faker.person.firstName()}
+                          {chat?.user_name}
                         </p>
                         <p className="text-muted m-0">Hey!</p>
                       </div>

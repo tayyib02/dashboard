@@ -5,8 +5,12 @@ import {
   PhotoOutlined,
   SendOutlined,
 } from "@mui/icons-material";
-import { Avatar, Box, IconButton, InputBase, TextField } from "@mui/material";
-import React from "react";
+import { Avatar, Box, IconButton, InputBase } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import io from "socket.io-client";
+const socket = io("http://localhost:5500");
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -21,6 +25,53 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 function ChatMessages() {
+  const params = useParams();
+  const location = useLocation();
+  const { userId } = location.state;
+  const [Messages, setMessages] = useState([]);
+  const [newMessage, setnewMessage] = useState("");
+
+  const getChat = async (id) => {
+    const response = await axios.get(
+      `http://localhost:5500/api/v1/chat/getAllMessagesByConversationId?conversationId=${id}`
+    );
+    console.log(response);
+    setMessages(response?.data?.messages);
+  };
+  socket.on("userStatus", (data) => {
+    console.log("dasdasds", data);
+  });
+
+  const handleSendMessage = () => {
+    socket.emit("sendMessage", {
+      senderId: localStorage.getItem("userid"),
+      receiverId: userId,
+      conversationId: Messages[0]?.conversationSid,
+      message: newMessage,
+      senderSocketId : socket.id
+    });
+  };
+
+  useEffect(() => {
+    const handlePrivateMessage = (data) => {
+      console.log('Received private message:', data);
+      setMessages(prev => [...prev, data]);
+    };
+
+    // Listen for 'privateMessage' event only once when the component mounts
+    socket.on('privateMessage', handlePrivateMessage);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      socket.off('privateMessage', handlePrivateMessage);
+    };
+  }, []);
+
+  useEffect(() => {
+   
+    socket.emit("connect_user", localStorage.getItem("userid"));
+    getChat(params?.id);
+  }, [params?.id]);
   return (
     <Box className="h-100  d-flex flex-column mx-3 shadow">
       <Box
@@ -53,7 +104,22 @@ function ChatMessages() {
         sx={{ flex: 1 }}
         className="d-flex flex-column gap-3 align-items-start p-4 overflowY-auto"
       >
-        <Box
+        {Messages?.map((message) => {
+          return (
+            <Box
+              key={message?.sid}
+              className={`bg-primary text-white p-2 rounded ${
+                message?.author === localStorage.getItem("userid")
+                  ? "align-self-end"
+                  : "align-self-start"
+              }`}
+              sx={{ maxWidth: "350px" }}
+            >
+              {message?.body}
+            </Box>
+          );
+        })}
+        {/* <Box
           className="bg-primary text-white p-2 rounded align-self-start"
           sx={{ maxWidth: "350px" }}
         >
@@ -80,7 +146,7 @@ function ChatMessages() {
           sx={{ maxWidth: "350px" }}
         >
           Thanks
-        </Box>
+        </Box> */}
       </Box>
       <Box className="mx-2 mx-sm-4 d-flex gap-2 align-items-center my-4 border rounded">
         <InputBase
@@ -88,6 +154,10 @@ function ChatMessages() {
           sx={{ p: 2 }}
           placeholder="Message...."
           variant=""
+          value={newMessage}
+          onChange={(e) => {
+            setnewMessage(e.target.value);
+          }}
         ></InputBase>
         <IconButton>
           <VisuallyHiddenInput type="file" />
@@ -97,7 +167,7 @@ function ChatMessages() {
           <VisuallyHiddenInput type="file" />
           <FileOpenOutlined />
         </IconButton>
-        <IconButton color="primary">
+        <IconButton color="primary" onClick={handleSendMessage}>
           <SendOutlined />
         </IconButton>
       </Box>
