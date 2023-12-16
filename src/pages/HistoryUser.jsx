@@ -187,7 +187,7 @@ function HistoryUser() {
                   <option>2023</option>
                 </select>
               </h6>
-              <Link to={"recent-purchases"}>See all</Link>
+              <Link to={"recent-reviews"}>See all</Link>
             </Stack>
             <Stack
               direction={"column"}

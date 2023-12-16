@@ -12,8 +12,10 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
+
 import React, { useState } from "react";
 import Header from "../components/Header";
+import { API_Endpoint, token } from "../components/API";
 import {
   BusinessOutlined,
   Close,
@@ -39,74 +41,111 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const PasswordDailog = ({ open, handleClose }) => {
-  return (
-    <Dialog
-      open={open}
-      handleClose={() => handleClose()}
-      maxWidth={"sm"}
-      fullWidth
-    >
-      <DialogTitle>
-        <Box className="d-flex align-items-center justify-content-between mb-3">
-          <h6 className="m-0 fw-bold">Change Account Password</h6>
-          <IconButton onClick={() => handleClose()}>
-            <Close />
-          </IconButton>
-        </Box>
-      </DialogTitle>
-      <DialogContent>
-        <Stack direction={"column"} gap={3}>
-          <TextField
-            label="Old Password"
-            size="small"
-            variant="filled"
-            InputProps={{ disableUnderline: true }}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            fullWidth
-            type="password"
-          />
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-          <TextField
-            label="New Password"
-            size="small"
-            variant="filled"
-            InputProps={{ disableUnderline: true }}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            fullWidth
-            type="password"
-          />
-          <TextField
-            label="Confirm Password"
-            size="small"
-            variant="filled"
-            InputProps={{ disableUnderline: true }}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            fullWidth
-            type="password"
-          />
-        </Stack>
-      </DialogContent>
-      <DialogActions>
-        <Box className="d-flex align-items-center justify-content-center gap-3 w-100 mb-2">
-          <Button disableElevation onClick={() => handleClose()}>
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            disableElevation
-            onClick={() => handleClose()}
-          >
-            Save
-          </Button>
-        </Box>
-      </DialogActions>
-    </Dialog>
+  const handleSave = () => {
+    // Check if passwords match before making the request
+    if (newPassword !== confirmPassword) {
+      // Handle password mismatch error
+      console.error("New password and confirm password do not match.");
+      return;
+    }
+
+    // Prepare the request body
+    const requestBody = {
+      PasswordCurrent: currentPassword,
+      Password: newPassword,
+      ConfirmPassword: confirmPassword,
+    };
+
+    // Make PATCH request to update the password
+    fetch(`${API_Endpoint}/users/updateMyPassword`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(requestBody),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response data (data.message)
+        console.log(data.message);
+      })
+      .catch((error) => {
+        console.error("Error updating password:", error);
+      })
+      .finally(() => {
+        // Close the dialog whether the request was successful or not
+        handleClose();
+      });
+  };
+  return (
+    <Dialog open={open} onClose={handleClose} maxWidth={"sm"} fullWidth>
+    <DialogTitle>
+      <Box className="d-flex align-items-center justify-content-between mb-3">
+        <h6 className="m-0 fw-bold">Change Account Password</h6>
+        <IconButton onClick={handleClose}>
+          <Close />
+        </IconButton>
+      </Box>
+    </DialogTitle>
+    <DialogContent>
+      <Stack direction={"column"} gap={3}>
+        <TextField
+          label="Current Password"
+          size="small"
+          variant="filled"
+          InputProps={{ disableUnderline: true }}
+          InputLabelProps={{ shrink: true }}
+          fullWidth
+          type="password"
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
+        />
+
+        <TextField
+          label="New Password"
+          size="small"
+          variant="filled"
+          InputProps={{ disableUnderline: true }}
+          InputLabelProps={{ shrink: true }}
+          fullWidth
+          type="password"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+        />
+
+        <TextField
+          label="Confirm Password"
+          size="small"
+          variant="filled"
+          InputProps={{ disableUnderline: true }}
+          InputLabelProps={{ shrink: true }}
+          fullWidth
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+      </Stack>
+    </DialogContent>
+    <DialogActions>
+      <Box className="d-flex align-items-center justify-content-center gap-3 w-100 mb-2">
+        <Button disableElevation onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          disableElevation
+          onClick={handleSave}
+        >
+          Save
+        </Button>
+      </Box>
+    </DialogActions>
+  </Dialog>
   );
 };
 
@@ -330,6 +369,38 @@ const BusinessDailog = ({ open, handleClose }) => {
 };
 
 const DeactivateDailog = ({ open, handleClose }) => {
+  // Fetch data from the API with JWT token in headers
+
+  const email = "new123@gmail.com";
+
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const requestBody = {
+    email: email,
+    password: confirmPassword,
+  };
+  // Event handler to update the password state when the input changes
+  const handlePasswordChange = (event) => {
+    setConfirmPassword(event.target.value);
+  };
+  const diactivateAccount = () => {
+    console.log("Inside inactive account API");
+    fetch("http://localhost:5500/api/v1/users/deactivateMe", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(requestBody),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.message);
+      })
+      .catch((error) => {
+        console.error("Error fetching reviews:", error);
+      });
+  };
+
   return (
     <Dialog
       open={open}
@@ -366,6 +437,8 @@ const DeactivateDailog = ({ open, handleClose }) => {
           size="small"
           variant="filled"
           fullWidth
+          value={confirmPassword}
+          onChange={handlePasswordChange} // Attach the event handler to the onChange event
         />
       </DialogContent>
       <DialogActions>
@@ -377,7 +450,7 @@ const DeactivateDailog = ({ open, handleClose }) => {
             color="error"
             variant="contained"
             disableElevation
-            onClick={() => handleClose()}
+            onClick={() => diactivateAccount()}
           >
             Deactivate Account
           </Button>
@@ -386,6 +459,7 @@ const DeactivateDailog = ({ open, handleClose }) => {
     </Dialog>
   );
 };
+
 const ReportDailog = ({ open, handleClose }) => {
   return (
     <Dialog

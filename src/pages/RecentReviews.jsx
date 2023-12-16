@@ -1,28 +1,23 @@
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Card,
   Container,
   Grid,
   IconButton,
-  MenuItem,
   Pagination,
   Stack,
   TextField,
 } from "@mui/material";
-import React from "react";
 import Header from "../components/Header";
 import { DataGrid } from "@mui/x-data-grid";
-
-import { faker } from "@faker-js/faker";
-import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
 import Review from "../components/Review";
 
-// const Statuses = ["All", "Paid", "Pending"];
-
 const HeaderContent = () => {
   const history = useNavigate();
+
   const routeTo = (route) => {
     history(route);
   };
@@ -39,70 +34,47 @@ const HeaderContent = () => {
 
 function RecentReviews() {
   const history = useNavigate();
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    const jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NzViZDE2ODJlMjk1YTg4NTI3YTJjZSIsImlhdCI6MTcwMjYzODIxMCwiZXhwIjoxNzAzMzU4MjEwfQ.5TnfUmGS2xk8BUGU75ohcAtsSa8WIaAQf42IGqjMFY0";
+
+    // Fetch data from the API with JWT token in headers
+    fetch("http://localhost:5500/api/v1/reviews", {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        
+        // Update the state with the fetched reviews
+        setReviews(data.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching reviews:", error);
+      });
+  }, []); // Empty dependency array ensures the effect runs only once on mount
 
   const routeTo = (route) => {
     history(route);
   };
+
   return (
     <Container maxWidth="100%">
       <Header Data={<HeaderContent />} />
-
-      {/* <Stack
-          direction={"row"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          spacing={2}
-          className="mt-3"
-        >
-          <TextField
-            variant="filled"
-            size="small"
-            label="Search"
-            fullWidth
-            sx={{
-              maxWidth: "300px",
-            }}
-            InputProps={{
-              disableUnderline: true,
-            }}
-          ></TextField>
-          <TextField
-            id="outlined-select-currency"
-            select
-            value={"Paid"}
-            defaultValue={"Paid"}
-            variant="filled"
-            label="Status"
-            size="small"
-            fullWidth
-            sx={{
-              maxWidth: "300px",
-            }}
-            InputProps={{
-              disableUnderline: true,
-            }}
-          >
-            {Statuses.map((option) => (
-              <MenuItem
-                key={option}
-                value={option}
-                className="d-flex align-items-center gap-2"
-              >
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Stack> */}
       <Grid container spacing={2} className="mt-4">
-        {new Array(9).fill(null).map((_, i) => {
-          return (
-            <Grid item xs={12} md={6} xl={4}>
-              <Card className="p-3 shadow-sm-sm rounded d-flex flex-column gap-3">
-                <Review key={i} className="border" />
-              </Card>
-            </Grid>
-          );
-        })}
+        {reviews.map((review) => (
+          <Grid key={review._id} item xs={12} md={6} xl={4}>
+            <Card className="p-3 shadow-sm-sm rounded d-flex flex-column gap-3">
+              <Review
+                review={review}
+               
+                className="border"
+              />
+            </Card>
+          </Grid>
+        ))}
       </Grid>
     </Container>
   );

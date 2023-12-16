@@ -318,7 +318,7 @@ function HistoryBussiness() {
                   <option>2023</option>
                 </select>
               </h6>
-              <Link to={"recent-purchases"}>See all</Link>
+              <Link to={"recent-purchases"}></Link>
             </Stack>
             <Stack
               direction={"column"}

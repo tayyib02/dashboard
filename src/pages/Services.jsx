@@ -1,3 +1,199 @@
+// import React, { useState, useEffect } from "react";
+// import {
+//   Avatar,
+//   Box,
+//   Button,
+//   Card,
+//   Container,
+//   Dialog,
+//   DialogActions,
+//   DialogContent,
+//   DialogTitle,
+//   Grid,
+//   IconButton,
+//   Pagination,
+//   Stack,
+//   TextField,
+// } from "@mui/material";
+// import Header from "../components/Header";
+// import { Add, Close, Edit } from "@mui/icons-material";
+// import { DataGrid } from "@mui/x-data-grid";
+// import { faker } from "@faker-js/faker";
+// import styled from "@emotion/styled";
+
+// const VisuallyHiddenInput = styled("input")({
+//   clip: "rect(0 0 0 0)",
+//   clipPath: "inset(50%)",
+//   height: 1,
+//   overflow: "hidden",
+//   position: "absolute",
+//   bottom: 0,
+//   left: 0,
+//   whiteSpace: "nowrap",
+//   width: 1,
+// });
+
+// const AddService = ({ open, handleClose }) => {
+//   return (
+//     <Dialog
+//       open={open}
+//       handleClose={() => handleClose()}
+//       maxWidth={"sm"}
+//       fullWidth
+//     >
+//       <DialogTitle>
+//         <Box className="d-flex align-items-center justify-content-between mb-3">
+//           <h6 className="m-0 fw-bold">Service Information</h6>
+//           <IconButton onClick={() => handleClose()}>
+//             <Close />
+//           </IconButton>
+//         </Box>
+//       </DialogTitle>
+//       <DialogContent>
+//         <Stack direction={"column"} gap={3}>
+//           <TextField
+//             label="Service name"
+//             size="small"
+//             variant="filled"
+//             InputProps={{ disableUnderline: true }}
+//             InputLabelProps={{
+//               shrink: true,
+//             }}
+//             fullWidth
+//             type="password"
+//           />
+
+//           <TextField
+//             label="Description"
+//             multiline
+//             rows={6}
+//             size="small"
+//             variant="filled"
+//             InputProps={{ disableUnderline: true }}
+//             InputLabelProps={{
+//               shrink: true,
+//             }}
+//             fullWidth
+//           />
+//           <Stack direction={"row"} spacing={2}>
+//             <TextField
+//               label="Price"
+//               size="small"
+//               variant="filled"
+//               InputProps={{ disableUnderline: true }}
+//               InputLabelProps={{
+//                 shrink: true,
+//               }}
+//               fullWidth
+//             />
+//             <TextField
+//               label="VAT"
+//               size="small"
+//               variant="filled"
+//               InputProps={{ disableUnderline: true }}
+//               InputLabelProps={{
+//                 shrink: true,
+//               }}
+//               fullWidth
+//             />
+//           </Stack>
+//           <Box
+//             component="label"
+//             className="border d-flex flex-column align-items-center justify-content-center"
+//             sx={{
+//               width: 100,
+//               height: 100,
+//               overflow: "visible",
+//               position: "relative",
+//             }}
+//           >
+//             <Add className="text-muted" />
+//             <p className="m-0 text-muted" style={{ fontSize: "12px" }}>
+//               Add Image
+//             </p>
+//             <VisuallyHiddenInput type="file" />
+//           </Box>
+//         </Stack>
+//       </DialogContent>
+//       <DialogActions>
+//         <Box className="d-flex align-items-center justify-content-center gap-3 w-100 mb-2">
+//           <Button disableElevation onClick={() => handleClose()}>
+//             Cancel
+//           </Button>
+//           <Button
+//             variant="contained"
+//             disableElevation
+//             onClick={() => handleClose()}
+//           >
+//             Save
+//           </Button>
+//         </Box>
+//       </DialogActions>
+//     </Dialog>
+//   );
+// };
+
+// function Services() {
+//   const [servicesDailogOpen, setServicesDailogOpen] = useState(false);
+//   const [services, setServices] = useState([]);
+
+//   const servicesDailogClose = () => {
+//     setServicesDailogOpen(false);
+//   };
+
+//   useEffect(() => {
+//     // Fetch services data
+//     fetch("http://localhost:5500/api/v1/service/64a9683c3fc1727eec119294")
+//       .then((response) => response.json())
+//       .then((data) => {
+//         if (data.status === "success") {
+//           // Set services data to state
+//           setServices(data.data.data);
+//         } else {
+//           console.error("Error fetching services:", data.message);
+//         }
+//       })
+//       .catch((error) => {
+//         console.error("Error fetching services:", error);
+//       });
+//   }, []); // Empty dependency array ensures this effect runs once on mount
+
+//   return (
+//     <Container maxWidth="100%" className="min-vh-100">
+//       <AddService open={servicesDailogOpen} handleClose={servicesDailogClose} />
+//       <Header />
+//       <Grid container spacing={2} sx={{ flex: 1 }} className="mt-4 ">
+//         <Grid item xs={12}>
+//           <Button
+//             variant="contained"
+//             disableElevation
+//             onClick={() => setServicesDailogOpen(true)}
+//           >
+//             <Add />
+//             Add service
+//           </Button>
+//         </Grid>
+//         <Grid item xs={12} className="d-flex flex-column gap-3">
+//           <Card className="p-3 shadow-sm rounded d-flex flex-column gap-3">
+//             <DataGrid
+//               rows={services}
+//               disableColumnMenu
+//               hideFooter
+//               rowHeight={85}
+//               onRowClick={() => setServicesDailogOpen(true)}
+//             />
+//           </Card>
+//           <div className="d-flex justify-content-end">
+//             <Pagination count={10} color="primary" />
+//           </div>
+//         </Grid>
+//       </Grid>
+//     </Container>
+//   );
+// }
+
+// export default Services;
+
 import {
   Avatar,
   Box,

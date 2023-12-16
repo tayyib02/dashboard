@@ -1,8 +1,9 @@
 import { Notifications, TrendingUp } from "@mui/icons-material";
 import { Card, Container, Divider, Grid, Stack } from "@mui/material";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
+import { API_Endpoint, token } from "../components/API";
 
 import { DataGrid } from "@mui/x-data-grid";
 
@@ -109,6 +110,81 @@ const recentPurchasesRows = new Array(5).fill(null).map((_, i) => ({
 }));
 
 function DashboardBusiness() {
+  const [totalRevenue, setTotalRevenue] = useState();
+  const [monthlyRevenue,setMonthlyRevenue] = useState([]);
+  const [newVisitors,setNewVisitors] = useState();
+  const [jobStats,setJobStats] = useState({});
+
+  useEffect(() => {
+    // Fetch services data
+    fetch(`${API_Endpoint}/business/revenue/stats`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Set services data to state
+          console.log(data);
+          setTotalRevenue(data.data.total);
+          // Extract and map monthly revenue
+    const monthlyRevenueData = data.data.monthly.map(month => month.Revenue);
+    setMonthlyRevenue(monthlyRevenueData);
+
+        } else {
+          console.error("Error fetching services:", data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching services:", error);
+      });
+
+       // Fetch services data
+    fetch(`${API_Endpoint}/business/visitor/getAll?year=2023`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Set services data to state
+          console.log(data);
+           
+
+        } else {
+          console.error("Error fetching services:", data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching services:", error);
+      });
+
+            // Fetch services data
+    fetch(`${API_Endpoint}/business/jobs/stats`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Set services data to state
+          console.log(data);
+          setJobStats({ ...data });
+  
+
+        } else {
+          console.error("Error fetching services:", data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching services:", error);
+      });
+
+  }, []);
+
   return (
     <Container maxWidth="100%">
       <Header />
@@ -132,10 +208,7 @@ function DashboardBusiness() {
                 series={[
                   {
                     name: "Earning",
-                    data: [
-                      2.3, 3.1, 4.0, 10.1, 4.0, 3.6, 3.2, 2.3, 1.4, 0.8, 0.5,
-                      0.2,
-                    ],
+                    data: monthlyRevenue,
                   },
                 ]}
               />
@@ -157,7 +230,7 @@ function DashboardBusiness() {
                   <h4 className="mb-4">New Visits</h4>
                   <div>
                     <h1 className="m-0">
-                      {faker.helpers.rangeToNumber({ min: 1000, max: 10000 })}
+                      {newVisitors}
                     </h1>
                     <p className="text-success">
                       +21.01% <TrendingUp />
@@ -177,7 +250,7 @@ function DashboardBusiness() {
                 <div className="h-100 d-flex flex-column justify-content-center w-50">
                   <h4 className="mb-4">Total Revenue</h4>
                   <div>
-                    <h1 className="m-0">${faker.commerce.price()}</h1>
+                    <h1 className="m-0">${totalRevenue}</h1>
                     <p className="text-success">
                       +21.01% <TrendingUp />
                     </p>
@@ -212,7 +285,7 @@ function DashboardBusiness() {
           <Card className="p-3 shadow-sm rounded d-flex flex-column  h-100">
             <Stack direction={"row"} justifyContent={"space-between"}>
               <h6 className="m-0">Jobs in Cities</h6>
-              <Link to={"recent-purchases"}>See all</Link>
+              <Link to={"recent-purchases"}></Link>
             </Stack>
             <Stack
               direction={"column"}

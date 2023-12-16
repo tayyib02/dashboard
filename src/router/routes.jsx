@@ -31,10 +31,6 @@ const routes = createBrowserRouter([
             element: <RecentOrders />,
           },
           {
-            path: "recent-reviews",
-            element: <RecentReviews />,
-          },
-          {
             path: "chats/open/:id",
             element: <ChatMessages />,
           },
@@ -68,7 +64,16 @@ const routes = createBrowserRouter([
           },
           {
             path: "history",
-            element: <HistoryUser />,
+            children: [
+              {
+                path: "",
+                element: <HistoryUser />,
+              },
+              {
+                path: "recent-reviews",
+                element: <RecentReviews />,
+              },
+            ],
           },
           {
             path: "settings",
@@ -121,7 +126,16 @@ const routes = createBrowserRouter([
           },
           {
             path: "history",
-            element: <HistoryBussiness />,
+            children: [
+              {
+                path: "",
+                element: <HistoryBussiness />,
+              },
+              {
+                path: "recent-purchases",
+                element: <RecentOrders />,
+              },
+            ],
           },
           {
             path: "settings",

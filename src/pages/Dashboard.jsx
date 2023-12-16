@@ -173,7 +173,7 @@ function Dashboard() {
               justifyContent={"space-between"}
             >
               <h6 className="m-0">Recent Reviews</h6>
-              <Link to={"recent-reviews"}>See all</Link>
+              <Link to={"history/recent-reviews"}>See all</Link>
             </Stack>
             <Stack
               direction={"column"}
