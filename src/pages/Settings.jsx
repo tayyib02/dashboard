@@ -15,7 +15,7 @@ import {
 
 import React, { useState } from "react";
 import Header from "../components/Header";
-import { API_Endpoint, token } from "../components/API";
+import { API_Endpoint, token, email } from "../components/API";
 import {
   BusinessOutlined,
   Close,
@@ -23,6 +23,7 @@ import {
   EditOutlined,
   ErrorOutline,
   LockOutlined,
+  Password,
   PersonOutline,
   WarningAmberOutlined,
 } from "@mui/icons-material";
@@ -72,7 +73,7 @@ const PasswordDailog = ({ open, handleClose }) => {
       .then((response) => response.json())
       .then((data) => {
         // Handle the response data (data.message)
-        console.log(data.message);
+        console.log(data);
       })
       .catch((error) => {
         console.error("Error updating password:", error);
@@ -150,6 +151,39 @@ const PasswordDailog = ({ open, handleClose }) => {
 };
 
 const ProfileDailog = ({ open, handleClose }) => {
+  const [FirstName, setFirstName] = useState('');
+  const [LastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
+  const [Email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleUpdateProfile = () => {
+    // Make a PATCH request to update the user profile
+    fetch(`${API_Endpoint}/users/updateme`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        FirstName,
+        LastName,
+        Email,
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          console.log('Profile updated successfully');
+          handleClose(); // Close the dialog after successful update
+        } else {
+          console.error('Error updating profile:', data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error updating profile:', error);
+      });
+  };
   return (
     <Dialog
       open={open}
@@ -172,6 +206,8 @@ const ProfileDailog = ({ open, handleClose }) => {
             size="small"
             variant="filled"
             InputProps={{ disableUnderline: true }}
+            onChange={(e) => setFirstName(e.target.value)}
+            value={FirstName}
             InputLabelProps={{
               shrink: true,
             }}
@@ -182,6 +218,8 @@ const ProfileDailog = ({ open, handleClose }) => {
             size="small"
             variant="filled"
             InputProps={{ disableUnderline: true }}
+            onChange={(e) => setLastName(e.target.value)}
+            value={LastName}
             InputLabelProps={{
               shrink: true,
             }}
@@ -192,6 +230,8 @@ const ProfileDailog = ({ open, handleClose }) => {
             size="small"
             variant="filled"
             InputProps={{ disableUnderline: true }}
+            onChange={(e) => setUsername(e.target.value)}
+            value={username}
             InputLabelProps={{
               shrink: true,
             }}
@@ -202,6 +242,8 @@ const ProfileDailog = ({ open, handleClose }) => {
             size="small"
             variant="filled"
             InputProps={{ disableUnderline: true }}
+            onChange={(e) => setEmail(e.target.value)}
+            value={Email}
             InputLabelProps={{
               shrink: true,
             }}
@@ -213,6 +255,8 @@ const ProfileDailog = ({ open, handleClose }) => {
             size="small"
             variant="filled"
             InputProps={{ disableUnderline: true }}
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
             InputLabelProps={{
               shrink: true,
             }}
@@ -229,7 +273,7 @@ const ProfileDailog = ({ open, handleClose }) => {
           <Button
             variant="contained"
             disableElevation
-            onClick={() => handleClose()}
+            onClick={() => handleUpdateProfile()}
           >
             Update
           </Button>
@@ -369,32 +413,29 @@ const BusinessDailog = ({ open, handleClose }) => {
 };
 
 const DeactivateDailog = ({ open, handleClose }) => {
-  // Fetch data from the API with JWT token in headers
+    const [confirmPassword, setConfirmPassword] = useState("");
 
-  const email = "new123@gmail.com";
-
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  const requestBody = {
-    email: email,
-    password: confirmPassword,
-  };
-  // Event handler to update the password state when the input changes
-  const handlePasswordChange = (event) => {
+  
+   const handlePasswordChange = (event) => {
     setConfirmPassword(event.target.value);
   };
   const diactivateAccount = () => {
     console.log("Inside inactive account API");
-    fetch("http://localhost:5500/api/v1/users/deactivateMe", {
-      method: "POST",
+    fetch(`${API_Endpoint}/users/deactivateMe`,{
+      method: "PATCH",
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        Email: email,
+        Password: confirmPassword
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data.message);
+        handleClose();
       })
       .catch((error) => {
         console.error("Error fetching reviews:", error);
@@ -646,7 +687,7 @@ function Settings() {
           }}
           onClick={() => setReportDailogOpen(true)}
         >
-          <p className="m-0 text-muted">Report a Client / Business</p>
+          <p className="m-0 text-muted">Report a Business</p>
           <ErrorOutline className="text-muted" />
         </Stack>
       </Stack>

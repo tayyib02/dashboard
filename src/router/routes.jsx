@@ -13,6 +13,7 @@ import ChatMessages from "../pages/ChatMessages";
 import NoMessage from "../pages/NoMessage";
 import RecentOrders from "../pages/RecentOrders";
 import RecentReviews from "../pages/RecentReviews";
+import BusinessSettings from "../pages/BusinessSettings";
 
 const routes = createBrowserRouter([
   {
@@ -139,7 +140,7 @@ const routes = createBrowserRouter([
           },
           {
             path: "settings",
-            element: <Settings />,
+            element: <BusinessSettings />,
           },
           {
             path: "services",

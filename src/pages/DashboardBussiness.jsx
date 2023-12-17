@@ -111,9 +111,9 @@ const recentPurchasesRows = new Array(5).fill(null).map((_, i) => ({
 
 function DashboardBusiness() {
   const [totalRevenue, setTotalRevenue] = useState();
-  const [monthlyRevenue,setMonthlyRevenue] = useState([]);
-  const [newVisitors,setNewVisitors] = useState();
-  const [jobStats,setJobStats] = useState({});
+  const [monthlyRevenue, setMonthlyRevenue] = useState([]);
+  const [newVisitors, setNewVisitors] = useState();
+  const [jobStats, setJobStats] = useState([]);
 
   useEffect(() => {
     // Fetch services data
@@ -126,12 +126,13 @@ function DashboardBusiness() {
       .then((data) => {
         if (data.status === "success") {
           // Set services data to state
-          console.log(data);
+
           setTotalRevenue(data.data.total);
           // Extract and map monthly revenue
-    const monthlyRevenueData = data.data.monthly.map(month => month.Revenue);
-    setMonthlyRevenue(monthlyRevenueData);
-
+          const monthlyRevenueData = data.data.monthly.map(
+            (month) => month.Revenue
+          );
+          setMonthlyRevenue(monthlyRevenueData);
         } else {
           console.error("Error fetching services:", data.message);
         }
@@ -140,7 +141,7 @@ function DashboardBusiness() {
         console.error("Error fetching services:", error);
       });
 
-       // Fetch services data
+    // Fetch services data
     fetch(`${API_Endpoint}/business/visitor/getAll?year=2023`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -150,9 +151,8 @@ function DashboardBusiness() {
       .then((data) => {
         if (data.status === "success") {
           // Set services data to state
-          console.log(data);
-           
 
+          setNewVisitors(data.count);
         } else {
           console.error("Error fetching services:", data.message);
         }
@@ -161,7 +161,7 @@ function DashboardBusiness() {
         console.error("Error fetching services:", error);
       });
 
-            // Fetch services data
+    // Fetch services data
     fetch(`${API_Endpoint}/business/jobs/stats`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -170,11 +170,8 @@ function DashboardBusiness() {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success") {
-          // Set services data to state
-          console.log(data);
-          setJobStats({ ...data });
-  
-
+          const jobStats = data.data.map((item) => item.count); // Map each object's 'count' property
+          setJobStats(jobStats); // Update the state with the extracted values
         } else {
           console.error("Error fetching services:", data.message);
         }
@@ -182,7 +179,6 @@ function DashboardBusiness() {
       .catch((error) => {
         console.error("Error fetching services:", error);
       });
-
   }, []);
 
   return (
@@ -229,9 +225,7 @@ function DashboardBusiness() {
                 <div className="h-100 d-flex flex-column justify-content-center w-50">
                   <h4 className="mb-4">New Visits</h4>
                   <div>
-                    <h1 className="m-0">
-                      {newVisitors}
-                    </h1>
+                    <h1 className="m-0">{newVisitors}</h1>
                     <p className="text-success">
                       +21.01% <TrendingUp />
                     </p>
@@ -296,7 +290,7 @@ function DashboardBusiness() {
               <BarChart
                 series={[
                   {
-                    data: [400, 430, 448, 470, 540],
+                    data: jobStats,
                   },
                 ]}
               />
