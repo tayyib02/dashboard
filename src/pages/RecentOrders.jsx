@@ -8,7 +8,8 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { API_Endpoint, token, email } from "../components/API";
 import Header from "../components/Header";
 import { DataGrid } from "@mui/x-data-grid";
 
@@ -135,11 +136,51 @@ const HeaderContent = () => {
 };
 
 function RecentOrders() {
+  const [invoices, setInvoices] = useState([]);
+
   const history = useNavigate();
 
   const routeTo = (route) => {
     history(route);
   };
+
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      try {
+        const response = await fetch(`${API_Endpoint}/order/getBusinessOrders`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setInvoices(data.data.data);
+        } else {
+          console.error("Error fetching invoices:", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching invoices:", error);
+      }
+    };
+
+    fetchInvoices();
+  }, []);
+
+  const formattedInvoices = invoices.map((invoice, index) => ({
+    id: index + 1,
+    name: invoice.users[0]?.FirstName || "",
+    price: invoice.price,
+    service: invoice.services[0]?.name || "",
+    city: invoice.services[0]?.business || "",
+    invoiceNumber: invoice.invoiceId,
+    orderDate: moment(invoice.orderDate).format("DD MMM YYYY"),
+    status: invoice.status,
+  }));
+
   return (
     <Container maxWidth="100%">
       <Header Data={<HeaderContent />} />
@@ -191,7 +232,7 @@ function RecentOrders() {
           </TextField>
         </Stack> */}
         <DataGrid
-          rows={inovicesRows}
+          rows={formattedInvoices}
           columns={InvoicesColumns}
           disableColumnMenu
           hideFooter

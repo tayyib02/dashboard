@@ -14,6 +14,8 @@ import NoMessage from "../pages/NoMessage";
 import RecentOrders from "../pages/RecentOrders";
 import RecentReviews from "../pages/RecentReviews";
 import BusinessSettings from "../pages/BusinessSettings";
+import UserInvoices from "../pages/UserInvoice";
+import UserRecentOrders from "../pages/UserRecentOrders";
 
 const routes = createBrowserRouter([
   {
@@ -29,7 +31,7 @@ const routes = createBrowserRouter([
           },
           {
             path: "recent-purchases",
-            element: <RecentOrders />,
+            element: <UserRecentOrders />,
           },
           {
             path: "chats/open/:id",
@@ -55,7 +57,7 @@ const routes = createBrowserRouter([
             children: [
               {
                 path: "",
-                element: <Invoices />,
+                element: <UserInvoices />,
               },
               {
                 path: ":id",
@@ -69,6 +71,10 @@ const routes = createBrowserRouter([
               {
                 path: "",
                 element: <HistoryUser />,
+              },
+              {
+                path: "recent-purchases",
+                element: <UserRecentOrders />,
               },
               {
                 path: "recent-reviews",

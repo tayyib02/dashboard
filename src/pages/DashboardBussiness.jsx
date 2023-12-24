@@ -114,6 +114,7 @@ function DashboardBusiness() {
   const [monthlyRevenue, setMonthlyRevenue] = useState([]);
   const [newVisitors, setNewVisitors] = useState();
   const [jobStats, setJobStats] = useState([]);
+  const [recentOrders, setRecentOrders] = useState([]);
 
   useEffect(() => {
     // Fetch services data
@@ -141,7 +142,7 @@ function DashboardBusiness() {
         console.error("Error fetching services:", error);
       });
 
-    // Fetch services data
+         // Fetch services data
     fetch(`${API_Endpoint}/business/visitor/getAll?year=2023`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -160,6 +161,26 @@ function DashboardBusiness() {
       .catch((error) => {
         console.error("Error fetching services:", error);
       });
+
+
+      fetch(`${API_Endpoint}/order/getBusinessOrders?recent=true`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "success") {
+            setRecentOrders(data.data.data);
+          } else {
+            console.error("Error fetching services:", data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching services:", error);
+        });
 
     // Fetch services data
     fetch(`${API_Endpoint}/business/jobs/stats`, {
@@ -180,6 +201,17 @@ function DashboardBusiness() {
         console.error("Error fetching services:", error);
       });
   }, []);
+
+  const formattedInvoices = recentOrders.map((invoice, index) => ({
+    id: index + 1,
+    name: invoice.users[0]?.FirstName || "",
+    price: invoice.price,
+    service: invoice.services[0]?.name || "",
+    city: invoice.services[0]?.business || "",
+    invoiceNumber: invoice.invoiceId,
+    orderDate: moment(invoice.orderDate).format("DD MMM YYYY"),
+    status: invoice.status,
+  }));
 
   return (
     <Container maxWidth="100%">
@@ -268,7 +300,7 @@ function DashboardBusiness() {
               <Link to={"recent-orders"}>See all</Link>
             </Stack>
             <DataGrid
-              rows={recentPurchasesRows}
+              rows={formattedInvoices}
               columns={recentPurchasesColumns}
               disableColumnMenu
               hideFooter

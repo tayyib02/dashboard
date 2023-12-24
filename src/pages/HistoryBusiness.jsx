@@ -125,6 +125,8 @@ function HistoryBussiness() {
   const [monthlyRevenue, setMonthlyRevenue] = useState([]);
   const [newVisitors, setNewVisitors] = useState();
   const [jobStats, setJobStats] = useState([]);
+  const [recentOrders, setRecentOrders] = useState([]);
+
 
   useEffect(() => {
     // Fetch services data
@@ -190,8 +192,57 @@ function HistoryBussiness() {
       .catch((error) => {
         console.error("Error fetching services:", error);
       });
+
+      fetch(`${API_Endpoint}/order/getBusinessOrders?recent=true`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "success") {
+            setRecentOrders(data.data.data);
+          } else {
+            console.error("Error fetching services:", data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching services:", error);
+        });
+
+    // Fetch services data
+    fetch(`${API_Endpoint}/business/jobs/stats`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          const jobStats = data.data.map((item) => item.count); // Map each object's 'count' property
+          setJobStats(jobStats); // Update the state with the extracted values
+        } else {
+          console.error("Error fetching services:", data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching services:", error);
+      });
+
   }, []);
-  
+
+  const formattedInvoices = recentOrders.map((invoice) => ({
+    id: invoice._id,
+    name: invoice.users[0]?.FirstName || "",
+    price: invoice.price,
+    service: invoice.services[0]?.name || "",
+    city: invoice.services[0]?.business || "",
+    invoiceNumber: invoice.invoiceId,
+    orderDate: moment(invoice.orderDate).format("DD MMM YYYY"),
+    status: invoice.status,
+  }));
   return (
     <Container maxWidth="100%">
       <Header />
@@ -364,7 +415,7 @@ function HistoryBussiness() {
               <Link to={"recent-purchases"}>See all</Link>
             </Stack>
             <DataGrid
-              rows={recentPurchasesRows}
+              rows={formattedInvoices}
               columns={recentPurchasesColumns}
               disableColumnMenu
               hideFooter

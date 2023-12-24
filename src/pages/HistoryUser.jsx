@@ -13,7 +13,8 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { API_Endpoint, token } from "../components/API";
 
 import { Link } from "react-router-dom";
 
@@ -102,6 +103,63 @@ const recentPurchasesRows = new Array(5).fill(null).map((_, i) => ({
 }));
 
 function HistoryUser() {
+  const [reviews, setReviews] = useState([]);
+  const [recentOrders, setRecentOrders] = useState([]);
+
+
+
+  useEffect(() => {
+
+    // Fetch data from the API with JWT token in headers
+    fetch(`${API_Endpoint}/reviews/getUserReview?reccent=true`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        
+        // Update the state with the fetched reviews
+        setReviews(data.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching reviews:", error);
+      });
+
+
+     // Fetch recent orders
+    fetch(`${API_Endpoint}/order/getUserOrders?recent=true`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          setRecentOrders(data.data.data);
+        } else {
+          console.error("Error fetching services:", data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching services:", error);
+      });
+
+
+
+  }, []); 
+
+  const formattedInvoices = recentOrders.map((invoice, index) => ({
+    id: index + 1, // Use the _id field as the unique id
+    name: invoice.businesses[0]?.title,
+    price: invoice.price,
+    service: invoice.services[0]?.name || "",
+    City: invoice.businesses[0]?.city,
+    invoiceNumber: invoice.invoiceId,
+    orderDate: moment(invoice.orderDate).format("DD MMM YYYY"),
+    status: invoice.status,
+  }));
+
   return (
     <Container maxWidth="100%">
       <Header />
@@ -135,7 +193,7 @@ function HistoryUser() {
               <Link to={"recent-purchases"}>See all</Link>
             </Stack>
             <DataGrid
-              rows={recentPurchasesRows}
+              rows={formattedInvoices}
               columns={recentPurchasesColumns}
               disableColumnMenu
               hideFooter
@@ -189,20 +247,9 @@ function HistoryUser() {
               </h6>
               <Link to={"recent-reviews"}>See all</Link>
             </Stack>
-            <Stack
-              direction={"column"}
-              spacing={3}
-              justifyContent={"space-evenly"}
-              className=" h-100"
-            >
-              {new Array(4).fill(null).map((_, i) => {
-                return (
-                  <>
-                    <Review />
-                  </>
-                );
-              })}
-            </Stack>
+            {reviews.map((review) => (
+              <Review review={review} className="border" />
+            ))}
           </Card>
         </Grid>
       </Grid>

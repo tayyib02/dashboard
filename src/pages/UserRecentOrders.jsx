@@ -2,6 +2,7 @@ import {
   Box,
   Card,
   Container,
+  IconButton,
   MenuItem,
   Pagination,
   Stack,
@@ -9,15 +10,15 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { API_Endpoint, token, email } from "../components/API";
-
 import Header from "../components/Header";
 import { DataGrid } from "@mui/x-data-grid";
 
 import { faker } from "@faker-js/faker";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
 
-const Statuses = ["All", "Paid", "Pending"];
+// const Statuses = ["All", "Paid", "Pending"];
 
 const InvoicesColumns = [
   {
@@ -44,14 +45,6 @@ const InvoicesColumns = [
     field: "service",
     headerName: "Serivce",
     minWidth: 100,
-    flex: 1,
-    cellClassName: "text-muted",
-    headerClassName: "fw-bold bg-light",
-  },
-  {
-    field: "city",
-    headerName: "City",
-    minWidth: 150,
     flex: 1,
     cellClassName: "text-muted",
     headerClassName: "fw-bold bg-light",
@@ -114,10 +107,30 @@ const inovicesRows = new Array(10).fill(null).map((_, i) => ({
   status: faker.helpers.arrayElement(["Pending", "Paid"]),
 }));
 
-function Invoices() {
+const HeaderContent = () => {
   const history = useNavigate();
+  const routeTo = (route) => {
+    history(route);
+  };
+
+  return (
+    <div className="d-flex align-items-center gap-2">
+      <IconButton onClick={() => routeTo(-1)}>
+        <ArrowBack />
+      </IconButton>
+      <h4 className="m-0">
+        {location.pathname.split("/")[1] === "user"
+          ? "Recent Purchases"
+          : "Recent Orders"}
+      </h4>
+    </div>
+  );
+};
+
+function UserRecentOrders() {
   const [invoices, setInvoices] = useState([]);
-  const [statusFilter, setStatusFilter] = useState("All");
+
+  const history = useNavigate();
 
   const routeTo = (route) => {
     history(route);
@@ -126,7 +139,7 @@ function Invoices() {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await fetch(`${API_Endpoint}/order/getBusinessOrders`, {
+        const response = await fetch(`${API_Endpoint}/order/getUserOrders`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -149,12 +162,11 @@ function Invoices() {
     fetchInvoices();
   }, []);
 
-  const formattedInvoices = invoices.map((invoice) => ({
-    id: invoice._id,
-    name: invoice.users[0]?.FirstName || "",
+  const formattedInvoices = invoices.map((invoice, index) => ({
+    id: index + 1,
+    name: invoice.businesses[0]?.title || "",
     price: invoice.price,
     service: invoice.services[0]?.name || "",
-    city: invoice.services[0]?.business || "",
     invoiceNumber: invoice.invoiceId,
     orderDate: moment(invoice.orderDate).format("DD MMM YYYY"),
     status: invoice.status,
@@ -162,55 +174,54 @@ function Invoices() {
 
   return (
     <Container maxWidth="100%">
-      <Header />
+      <Header Data={<HeaderContent />} />
       <Card className="p-3 shadow-sm-sm rounded d-flex flex-column gap-3 mt-4">
-        <Stack
-          direction={"row"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          spacing={2}
-          className="mt-3"
-        lassName="mt-3"
-        >
-          <TextField
-            variant="filled"
-            size="small"
-            label="Search"
-            fullWidth
-            sx={{
-              maxWidth: "300px",
-            }}
-            InputProps={{
-              disableUnderline: true,
-            }}
-          ></TextField>
-          <TextField
-            id="outlined-select-currency"
-            select
-            value={statusFilter}
-            variant="filled"
-            label="Status"
-            size="small"
-            fullWidth
-            onChange={(e) => setStatusFilter(e.target.value)}
-            sx={{
-              maxWidth: "300px",
-            }}
-            InputProps={{
-              disableUnderline: true,
-            }}
+        {/* <Stack
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            spacing={2}
+            className="mt-3"
           >
-            {Statuses.map((option) => (
-              <MenuItem
-                key={option}
-                value={option}
-                className="d-flex align-items-center gap-2"
-              >
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
-          </Stack>
+            <TextField
+              variant="filled"
+              size="small"
+              label="Search"
+              fullWidth
+              sx={{
+                maxWidth: "300px",
+              }}
+              InputProps={{
+                disableUnderline: true,
+              }}
+            ></TextField>
+            <TextField
+              id="outlined-select-currency"
+              select
+              value={"Paid"}
+              defaultValue={"Paid"}
+              variant="filled"
+              label="Status"
+              size="small"
+              fullWidth
+              sx={{
+                maxWidth: "300px",
+              }}
+              InputProps={{
+                disableUnderline: true,
+              }}
+            >
+              {Statuses.map((option) => (
+                <MenuItem
+                  key={option}
+                  value={option}
+                  className="d-flex align-items-center gap-2"
+                >
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Stack> */}
         <DataGrid
           rows={formattedInvoices}
           columns={InvoicesColumns}
@@ -234,4 +245,4 @@ function Invoices() {
   );
 }
 
-export default Invoices;
+export default UserRecentOrders;

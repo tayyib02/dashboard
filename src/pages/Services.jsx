@@ -210,10 +210,11 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import { Add, Close, Edit } from "@mui/icons-material";
 import { DataGrid } from "@mui/x-data-grid";
+import { API_Endpoint, token, email, business_ID } from "../components/API";
 
 import { faker } from "@faker-js/faker";
 import styled from "@emotion/styled";
@@ -293,6 +294,63 @@ const recentPurchasesRows = new Array(5).fill(null).map((_, i) => ({
 }));
 
 const AddService = ({ open, handleClose }) => {
+  const [serviceName, setServiceName] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [vat, setVat] = useState("");
+  const [image, setImage] = useState(null);
+
+  const handleServiceNameChange = (e) => {
+    setServiceName(e.target.value);
+  };
+
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+  };
+
+  const handlePriceChange = (e) => {
+    setPrice(e.target.value);
+  };
+
+  const handleVatChange = (e) => {
+    setVat(e.target.value);
+  };
+
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
+
+  const handleSave = () => {
+    const formData = new FormData();
+    formData.append("name", serviceName);
+    formData.append("description", description);
+    formData.append("price", price);
+    formData.append("vat", vat);
+    formData.append("images", image);
+    formData.append("business", business_ID);
+
+
+    fetch(
+      `${API_Endpoint}/service/${business_ID}?business=${business_ID}`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          console.log("Service saved successfully");
+          handleClose(); // Close the dialog after successful save
+        } else {
+          console.error("Error saving service:", data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error saving service:", error);
+      });
+  };
+
   return (
     <Dialog
       open={open}
@@ -314,12 +372,13 @@ const AddService = ({ open, handleClose }) => {
             label="Service name"
             size="small"
             variant="filled"
+            onChange={handleServiceNameChange}
+            value={serviceName}
             InputProps={{ disableUnderline: true }}
             InputLabelProps={{
               shrink: true,
             }}
             fullWidth
-            type="password"
           />
 
           <TextField
@@ -328,6 +387,8 @@ const AddService = ({ open, handleClose }) => {
             rows={6}
             size="small"
             variant="filled"
+            onChange={handleDescriptionChange}
+            value={description}
             InputProps={{ disableUnderline: true }}
             InputLabelProps={{
               shrink: true,
@@ -339,6 +400,8 @@ const AddService = ({ open, handleClose }) => {
               label="Price"
               size="small"
               variant="filled"
+              onChange={handlePriceChange}
+              value={price}
               InputProps={{ disableUnderline: true }}
               InputLabelProps={{
                 shrink: true,
@@ -349,6 +412,8 @@ const AddService = ({ open, handleClose }) => {
               label="VAT"
               size="small"
               variant="filled"
+              onChange={handleVatChange}
+              value={vat}
               InputProps={{ disableUnderline: true }}
               InputLabelProps={{
                 shrink: true,
@@ -366,11 +431,31 @@ const AddService = ({ open, handleClose }) => {
               position: "relative",
             }}
           >
-            <Add className="text-muted" />
-            <p className="m-0 text-muted" style={{ fontSize: "12px" }}>
-              Add Image
-            </p>
-            <VisuallyHiddenInput type="file" />
+            <input
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleImageChange}
+            />
+            {image ? (
+              <img
+                src={URL.createObjectURL(image)}
+                alt="Selected Image"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                }}
+              />
+            ) : (
+              <>
+                <Add className="text-muted" />
+                <p className="m-0 text-muted" style={{ fontSize: "12px" }}>
+                  Add Image
+                </p>
+              </>
+            )}
           </Box>
         </Stack>
       </DialogContent>
@@ -382,7 +467,7 @@ const AddService = ({ open, handleClose }) => {
           <Button
             variant="contained"
             disableElevation
-            onClick={() => handleClose()}
+            onClick={() => handleSave()}
           >
             Save
           </Button>
@@ -394,9 +479,42 @@ const AddService = ({ open, handleClose }) => {
 
 function Services() {
   const [servicesDailogOpen, setServicesDailogOpen] = useState(false);
+  const [servicesData, setServicesData] = useState([]);
   const servicesDailogClose = () => {
     setServicesDailogOpen(false);
   };
+
+   useEffect(() => {
+    // Function to fetch services data
+    const fetchServices = async () => {
+      try {
+        const response = await fetch(`${API_Endpoint}/service/${business_ID}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        const data = await response.json();
+
+        if (data.status === 'success') {
+          // Set services data to state
+          console.log(data.data.data);
+          setServicesData(data.data.data);
+
+        } else {
+          console.error('Error fetching services:', data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      }
+    };
+
+    // Call the function to fetch services data
+    fetchServices();
+  }, []);
+
+
   return (
     <Container maxWidth="100%" className="min-vh-100">
       <AddService open={servicesDailogOpen} handleClose={servicesDailogClose} />
@@ -417,7 +535,7 @@ function Services() {
         <Grid item xs={12} className="d-flex flex-column gap-3">
           <Card className="p-3 shadow-sm rounded d-flex flex-column gap-3">
             <DataGrid
-              rows={recentPurchasesRows}
+              rows={servicesData}
               columns={recentPurchasesColumns}
               disableColumnMenu
               hideFooter

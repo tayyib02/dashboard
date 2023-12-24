@@ -13,6 +13,8 @@ import Header from "../components/Header";
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
+import { API_Endpoint, token } from "../components/API";
+
 import Review from "../components/Review";
 
 const HeaderContent = () => {
@@ -37,12 +39,11 @@ function RecentReviews() {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    const jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NzViZDE2ODJlMjk1YTg4NTI3YTJjZSIsImlhdCI6MTcwMjYzODIxMCwiZXhwIjoxNzAzMzU4MjEwfQ.5TnfUmGS2xk8BUGU75ohcAtsSa8WIaAQf42IGqjMFY0";
 
     // Fetch data from the API with JWT token in headers
-    fetch("http://localhost:5500/api/v1/reviews", {
+    fetch(`${API_Endpoint}/reviews/getUserReview`, {
       headers: {
-        Authorization: `Bearer ${jwtToken}`,
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((response) => response.json())

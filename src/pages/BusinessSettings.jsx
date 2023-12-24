@@ -289,23 +289,31 @@ import {
     const [BusinessPostcode, setBusinessPostcode] = useState('');
     const [BusinessEmail, setBusinessEmail] = useState('');
     const [BusinessAddress, setBusinessAddress] = useState('');
+    const [logoImage, setLogoImage] = useState(null);
+
+    const handleLogoChange = (e) => {
+      // Set the selected image file to the state
+      const file = e.target.files[0];
+      setLogoImage(file);
+    };
   
     const handleUpdateProfile = () => {
-      // Make a PATCH request to update the user profile
-      fetch(`${API_Endpoint}/business/auth/updateMe`,{
+      // Create FormData to send data including the image file
+      const formData = new FormData();
+      formData.append('BusinessName', BusinessName);
+      formData.append('BusinessPhoneNumber', BusinessPhoneNumber);
+      formData.append('BusinessPostcode', BusinessPostcode);
+      formData.append('BusinessEmail', BusinessEmail);
+      formData.append('BusinessAddress', BusinessAddress);
+      formData.append('profileImage', logoImage);
+  
+      // Make a PATCH request to update the business profile
+      fetch(`${API_Endpoint}/business/auth/updateMe`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-            BusinessName,
-            BusinessPhoneNumber,
-            BusinessPostcode,
-            BusinessEmail,
-            BusinessAddress
-        
-        }),
+        body: formData,
       })
         .then(response => response.json())
         .then(data => {
@@ -349,9 +357,14 @@ import {
                 borderRadius: "50%",
               }}
             >
-              <VisuallyHiddenInput type="file" />
+              <input
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={handleLogoChange}
+          />
               <Avatar
-                src="https://i.pravatar.cc/300"
+                src={logoImage ? URL.createObjectURL(logoImage) : "https://i.pravatar.cc/300"}
                 sx={{
                   width: 100,
                   height: 100,
@@ -468,15 +481,15 @@ import {
     };
     const diactivateAccount = () => {
       console.log("Inside inactive account API");
-      fetch(`${API_Endpoint}business/auth/deactivateMe`,{
+      fetch(`${API_Endpoint}/business/auth/deactivateMe`,{
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          Email: email,
-          Password: confirmPassword
+          BusinessEmail: email,
+          BusinessPassword: confirmPassword
         }),
       })
         .then((response) => response.json())
