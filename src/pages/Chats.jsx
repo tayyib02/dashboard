@@ -16,6 +16,7 @@ import {
   TextField,
 } from "@mui/material";
 import axios from "axios";
+// import { Chat as TwilioChat } from "twilio";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -29,6 +30,13 @@ const [allChats, setallChats] = useState([])
     }}) : history("open/" + route ,{ state: {
       userId: user_id
     }});
+  };
+
+  const initializeTwilioChat = async () => {
+    const token = await fetchToken(); // Implement a function to get the Twilio token
+  
+    const chatClient = await TwilioChat.create(token);
+    return chatClient;
   };
 
   const getAllChats  = async()=>{

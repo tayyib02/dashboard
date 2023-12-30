@@ -329,14 +329,10 @@ const AddService = ({ open, handleClose }) => {
     formData.append("images", image);
     formData.append("business", business_ID);
 
-
-    fetch(
-      `${API_Endpoint}/service/${business_ID}?business=${business_ID}`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    )
+    fetch(`${API_Endpoint}/service/${business_ID}?business=${business_ID}`, {
+      method: "POST",
+      body: formData,
+    })
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success") {
@@ -484,35 +480,39 @@ function Services() {
     setServicesDailogOpen(false);
   };
 
-   useEffect(() => {
+
+
+  useEffect(() => {
     // Function to fetch services data
     const fetchServices = async () => {
       try {
         const response = await fetch(`${API_Endpoint}/service/${business_ID}`, {
-          method: 'GET',
+          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        
+
         const data = await response.json();
 
-        if (data.status === 'success') {
+        if (data.status === "success") {
           // Set services data to state
           console.log(data.data.data);
           setServicesData(data.data.data);
-
         } else {
-          console.error('Error fetching services:', data.message);
+          console.error("Error fetching services:", data.message);
         }
       } catch (error) {
-        console.error('Error fetching services:', error);
+        console.error("Error fetching services:", error);
       }
     };
 
     // Call the function to fetch services data
     fetchServices();
-  }, []);
+  }, [servicesData]);
+
+
+
 
 
   return (
